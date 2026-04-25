@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
-import { PRODUCTS } from './data/products.js'
 import { detectUserRegion } from './lib/geo.js'
 import { detectInitialLanguage, makeT } from './lib/i18n.js'
 import Header from './components/Header.jsx'
@@ -18,6 +17,33 @@ export default function App() {
   const [autoDetected, setAutoDetected] = useState(false)
   const [lang, setLang] = useState(() => detectInitialLanguage())
   const [selected, setSelected] = useState(null)
+
+  // Catálogo: viene de /public/data/products.json, generado por scrapers en GitHub Actions.
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/data/products.json')
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`)
+        return r.json()
+      })
+      .then((data) => {
+        if (cancelled) return
+        setProducts(Array.isArray(data) ? data : [])
+        setLoading(false)
+      })
+      .catch(() => {
+        if (cancelled) return
+        setError('catalog_fetch_failed')
+        setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   // Detectar país al cargar (afecta el ORDEN del catálogo, no el filtro).
   useEffect(() => {
@@ -47,20 +73,20 @@ export default function App() {
       // Local-first ordering
       if (userCountry === 'GLOBAL') {
         // Para usuarios fuera de LATAM: globales primero, luego locales
-        const globals = PRODUCTS.filter((p) => p.geo_tag === 'GLOBAL')
-        const rest = PRODUCTS.filter((p) => p.geo_tag !== 'GLOBAL')
+        const globals = products.filter((p) => p.geo_tag === 'GLOBAL')
+        const rest = products.filter((p) => p.geo_tag !== 'GLOBAL')
         return [...globals, ...rest]
       }
-      const local = PRODUCTS.filter((p) => p.geo_tag === userCountry)
-      const globals = PRODUCTS.filter((p) => p.geo_tag === 'GLOBAL')
-      const otherLocal = PRODUCTS.filter(
+      const local = products.filter((p) => p.geo_tag === userCountry)
+      const globals = products.filter((p) => p.geo_tag === 'GLOBAL')
+      const otherLocal = products.filter(
         (p) => p.geo_tag !== userCountry && p.geo_tag !== 'GLOBAL'
       )
       return [...local, ...globals, ...otherLocal]
     }
     // Filtro específico: solo productos de ese origen
-    return PRODUCTS.filter((p) => p.geo_tag === originFilter)
-  }, [originFilter, userCountry])
+    return products.filter((p) => p.geo_tag === originFilter)
+  }, [originFilter, userCountry, products])
 
   const onSelect = useCallback((product) => setSelected(product), [])
   const onClose = useCallback(() => setSelected(null), [])
@@ -101,7 +127,17 @@ export default function App() {
           )}
         </div>
 
-        {visibleProducts.length === 0 ? (
+        {loading ? (
+          <div className="py-20 text-center text-[12px] font-mono uppercase tracking-[0.2em] text-[var(--muted)]">
+            {lang === 'es' ? 'Cargando catálogo…' : 'Loading catalog…'}
+          </div>
+        ) : error ? (
+          <div className="py-20 text-center text-[13px] text-[var(--muted)]">
+            {lang === 'es'
+              ? 'No pudimos cargar el catálogo en este momento.'
+              : 'We could not load the catalog right now.'}
+          </div>
+        ) : visibleProducts.length === 0 ? (
           <div className="py-20 text-center text-[14px] text-[var(--muted)]">
             {t('catalog_empty')}
           </div>
