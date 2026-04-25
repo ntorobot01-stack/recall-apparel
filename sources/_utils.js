@@ -61,11 +61,30 @@ export function slugify(s) {
     .slice(0, 60)
 }
 
-// Extrae categoría a partir del nombre/handle. Heurística mínima.
+// Mapea el nombre del producto a la taxonomía de categorías de Recall Apparel.
+// Devuelve uno de: Footwear | Tops | Bottoms | Sets | Outerwear | Accessories | Bags | Jewelry.
+// Default: Footwear (la categoría más común en streetwear; los scrapers/sources
+// pueden sobreescribir explícitamente si la fuente expone su propia taxonomía).
 export function inferCategory(name) {
   const s = String(name).toLowerCase()
-  if (/(slide|sandal)/.test(s)) return 'Slides'
-  if (/(hood|tee|t-shirt|shirt|jacket|pant|short|crew|sweat)/.test(s)) return 'Apparel'
-  if (/(cap|hat|beanie|bag|sock)/.test(s)) return 'Accessories'
-  return 'Sneakers'
+  if (/(bag|backpack|tote|duffel|crossbody|fanny|pouch)/.test(s)) return 'Bags'
+  if (/(necklace|chain|ring|bracelet|earring|pendant|jewel)/.test(s)) return 'Jewelry'
+  if (/(jacket|coat|parka|puffer|bomber|windbreaker|anorak|vest)/.test(s)) return 'Outerwear'
+  if (/(set|tracksuit|two-piece|2-piece|matching set)/.test(s)) return 'Sets'
+  if (/(pant|trouser|jean|short|cargo|sweatpant|jogger|skirt)/.test(s)) return 'Bottoms'
+  if (/(hood|tee|t-shirt|shirt|crew|sweater|sweatshirt|polo|tank|jersey|long sleeve)/.test(s)) return 'Tops'
+  if (/(cap|hat|beanie|sock|belt|scarf|glove|sunglass|wallet)/.test(s)) return 'Accessories'
+  if (/(slide|sandal|sneaker|boot|shoe|trainer|runner|loafer)/.test(s)) return 'Footwear'
+  return 'Footwear'
+}
+
+// Mapea el nombre del producto a género. Default: Unisex (la mayoría del
+// streetwear se vende sin segmentación explícita). Sólo escala a M/W/Kids
+// cuando hay indicadores claros en el nombre.
+export function inferGender(name) {
+  const s = String(name).toLowerCase()
+  if (/\b(kids?|youth|toddler|infant|baby|junior|gs|ps|td)\b/.test(s)) return 'Kids'
+  if (/\b(women|woman|wmns|w'?s|female|ladies)\b/.test(s)) return 'Women'
+  if (/\b(men|man|mens|m'?s|male)\b/.test(s)) return 'Men'
+  return 'Unisex'
 }

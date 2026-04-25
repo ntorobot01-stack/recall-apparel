@@ -9,10 +9,14 @@ import RedirectModal from './components/RedirectModal.jsx'
 import Footer from './components/Footer.jsx'
 
 export default function App() {
-  // Filtro de origen: 'ALL' | 'MX' | 'CO' | 'GLOBAL'
-  // Default: 'ALL' — el usuario ve todo el catálogo. El orden es local-first
-  // según su país detectado (eso lo manejamos por separado abajo).
+  // Filtros del catálogo: 'ALL' es siempre el default (no filtra).
+  // - originFilter: 'ALL' | 'MX' | 'CO' | 'GLOBAL'
+  // - genderFilter: 'ALL' | 'Men' | 'Women' | 'Unisex' | 'Kids'
+  // - categoryFilter: 'ALL' | 'Footwear' | 'Tops' | 'Bottoms' | 'Sets' | 'Outerwear' | 'Accessories' | 'Bags' | 'Jewelry'
+  // El orden local-first sólo aplica cuando los tres están en 'ALL'.
   const [originFilter, setOriginFilter] = useState('ALL')
+  const [genderFilter, setGenderFilter] = useState('ALL')
+  const [categoryFilter, setCategoryFilter] = useState('ALL')
   const [userCountry, setUserCountry] = useState('GLOBAL')
   const [autoDetected, setAutoDetected] = useState(false)
   const [lang, setLang] = useState(() => detectInitialLanguage())
@@ -65,28 +69,33 @@ export default function App() {
 
   const t = useMemo(() => makeT(lang), [lang])
 
-  // Productos visibles según el filtro de origen.
-  // Cuando el filtro es 'ALL', se muestran todos pero ordenados local-first
-  // según el país detectado del usuario.
+  // Productos visibles: intersección de los 3 filtros (origen, género, categoría).
+  // El orden local-first se aplica primero sobre el catálogo completo y luego
+  // se filtra, para que el resultado preserve el orden incluso con filtros activos.
   const visibleProducts = useMemo(() => {
-    if (originFilter === 'ALL') {
-      // Local-first ordering
-      if (userCountry === 'GLOBAL') {
-        // Para usuarios fuera de LATAM: globales primero, luego locales
-        const globals = products.filter((p) => p.geo_tag === 'GLOBAL')
-        const rest = products.filter((p) => p.geo_tag !== 'GLOBAL')
-        return [...globals, ...rest]
-      }
+    // 1) Ordenar local-first sobre el catálogo completo.
+    let ordered
+    if (userCountry === 'GLOBAL') {
+      const globals = products.filter((p) => p.geo_tag === 'GLOBAL')
+      const rest = products.filter((p) => p.geo_tag !== 'GLOBAL')
+      ordered = [...globals, ...rest]
+    } else {
       const local = products.filter((p) => p.geo_tag === userCountry)
       const globals = products.filter((p) => p.geo_tag === 'GLOBAL')
       const otherLocal = products.filter(
         (p) => p.geo_tag !== userCountry && p.geo_tag !== 'GLOBAL'
       )
-      return [...local, ...globals, ...otherLocal]
+      ordered = [...local, ...globals, ...otherLocal]
     }
-    // Filtro específico: solo productos de ese origen
-    return products.filter((p) => p.geo_tag === originFilter)
-  }, [originFilter, userCountry, products])
+
+    // 2) Aplicar los 3 filtros como intersección.
+    return ordered.filter((p) => {
+      if (originFilter !== 'ALL' && p.geo_tag !== originFilter) return false
+      if (genderFilter !== 'ALL' && p.gender !== genderFilter) return false
+      if (categoryFilter !== 'ALL' && p.category !== categoryFilter) return false
+      return true
+    })
+  }, [originFilter, genderFilter, categoryFilter, userCountry, products])
 
   const onSelect = useCallback((product) => setSelected(product), [])
   const onClose = useCallback(() => setSelected(null), [])
@@ -103,6 +112,10 @@ export default function App() {
       <Header
         originFilter={originFilter}
         setOriginFilter={setOriginFilter}
+        genderFilter={genderFilter}
+        setGenderFilter={setGenderFilter}
+        categoryFilter={categoryFilter}
+        setCategoryFilter={setCategoryFilter}
         totalDeals={visibleProducts.length}
         autoDetected={autoDetected}
         lang={lang}

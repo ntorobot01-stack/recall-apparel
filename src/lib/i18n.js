@@ -21,12 +21,36 @@ export const TRANSLATIONS = {
     filter_colombia: 'Colombia',
     filter_global: 'Global',
 
+    // Filtro de género
+    gender_label: 'Género',
+    gender_all: 'Todos',
+    gender_men: 'Hombre',
+    gender_women: 'Mujer',
+    gender_unisex: 'Unisex',
+    gender_kids: 'Niños',
+
+    // Filtro de categoría
+    category_label: 'Categoría',
+    category_all: 'Todas',
+    category_footwear: 'Calzado',
+    category_tops: 'Ropa superior',
+    category_bottoms: 'Ropa inferior',
+    category_sets: 'Conjuntos',
+    category_outerwear: 'Abrigo',
+    category_accessories: 'Accesorios',
+    category_bags: 'Bolsos',
+    category_jewelry: 'Joyería',
+
+    // Drawer de filtros (mobile)
+    open_filters: 'Filtros',
+    close_filters: 'Cerrar',
+
     // Hero
     hero_edition: 'Edición · Global',
     hero_title_line1: 'Solo ofertas.',
     hero_title_line2: 'Streetwear premium.',
     hero_subtitle:
-      'Curamos descuentos verificados en boutiques oficiales: Nike, Off-White, SSENSE, END Clothing, Lust México, Hype Colombia y más. Nunca procesamos tu pago — cuando encuentres tu pieza, te llevamos directo a la tienda oficial.',
+      'Pieza por pieza. Tienda por tienda. Te traemos los mejores precios del streetwear premium en un solo lugar. Tú haces click. Compras directo en la tienda oficial. Así de simple.',
 
     // Catalog
     catalog_title: 'Catálogo',
@@ -74,11 +98,32 @@ export const TRANSLATIONS = {
     filter_colombia: 'Colombia',
     filter_global: 'Global',
 
+    gender_label: 'Gender',
+    gender_all: 'All',
+    gender_men: 'Men',
+    gender_women: 'Women',
+    gender_unisex: 'Unisex',
+    gender_kids: 'Kids',
+
+    category_label: 'Category',
+    category_all: 'All',
+    category_footwear: 'Footwear',
+    category_tops: 'Tops',
+    category_bottoms: 'Bottoms',
+    category_sets: 'Sets',
+    category_outerwear: 'Outerwear',
+    category_accessories: 'Accessories',
+    category_bags: 'Bags',
+    category_jewelry: 'Jewelry',
+
+    open_filters: 'Filters',
+    close_filters: 'Close',
+
     hero_edition: 'Edition · Global',
     hero_title_line1: 'Deals only.',
     hero_title_line2: 'Premium streetwear.',
     hero_subtitle:
-      "We curate verified discounts from official boutiques: Nike, Off-White, SSENSE, END Clothing, Lust México, Hype Colombia and more. We never process your payment — when you find your piece, we take you straight to the official store.",
+      'Piece by piece. Store by store. We bring you the best prices in premium streetwear, all in one place. You click. You buy at the official store. Simple as that.',
 
     catalog_title: 'Catalog',
     catalog_meta: (n) => `${n} pieces`,
