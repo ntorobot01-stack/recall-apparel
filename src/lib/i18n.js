@@ -1,0 +1,133 @@
+// ─────────────────────────────────────────────────────────────────────
+// i18n — diccionario único ES/EN
+// ─────────────────────────────────────────────────────────────────────
+
+export const TRANSLATIONS = {
+  es: {
+    // Top strip
+    top_strip_left: '// Solo ofertas · Actualizado hoy',
+    top_strip_right: 'No procesamos pagos · Te llevamos a la tienda oficial',
+
+    // Header
+    aggregator_tagline: 'Premium Streetwear · Aggregator',
+    deals_active: (n) => `${n} ofertas activas`,
+    region_detected: 'Región detectada',
+    region_detecting: 'Detectando región',
+
+    // Filtro de origen (header pill)
+    filter_label: 'Origen',
+    filter_all: 'Todas',
+    filter_mexico: 'México',
+    filter_colombia: 'Colombia',
+    filter_global: 'Global',
+
+    // Hero
+    hero_edition: 'Edición · Global',
+    hero_title_line1: 'Solo ofertas.',
+    hero_title_line2: 'Streetwear premium.',
+    hero_subtitle:
+      'Curamos descuentos verificados en boutiques oficiales: Nike, Off-White, SSENSE, END Clothing, Lust México, Hype Colombia y más. Nunca procesamos tu pago — cuando encuentres tu pieza, te llevamos directo a la tienda oficial.',
+
+    // Catalog
+    catalog_title: 'Catálogo',
+    catalog_meta: (n) => `${n} piezas`,
+    catalog_order_note: 'Locales primero · Globales después',
+    catalog_empty: 'No hay ofertas con este filtro. Cambia el origen para ver más.',
+
+    // Product card
+    go_to: 'Ir a',
+    trust_badge: 'Pago 100% seguro en la tienda oficial',
+
+    // Modal
+    secure_redirect: 'Redirección segura',
+    we_take_you_to: 'Te llevamos a',
+    leaving_message: (store, brand) =>
+      `Estás saliendo de Recall Apparel. Tu pago y tus datos serán procesados directamente por **${store}**, la tienda oficial de **${brand}**.`,
+    verifying_link: 'Verificando enlace…',
+
+    // Footer
+    footer_description:
+      'Agregador de afiliación. No vendemos ni almacenamos inventario, no procesamos pagos. Te llevamos directo a la tienda oficial de cada marca.',
+    footer_how_title: 'Cómo funciona',
+    footer_how_1: 'Encontramos ofertas en boutiques oficiales.',
+    footer_how_2: 'Te mostramos el precio que verás en la tienda.',
+    footer_how_3: 'Tú compras directo. Nosotros sólo te conectamos.',
+    footer_legal: 'Legal',
+    legal_1: 'Recall Apparel participa en programas de afiliación.',
+    legal_2: 'Marcas, imágenes y precios pertenecen a sus respectivos dueños.',
+    legal_3: 'Cada precio se muestra en la moneda original de la tienda destino.',
+    footer_mvp: 'MVP v1',
+  },
+
+  en: {
+    top_strip_left: '// Deals only · Updated today',
+    top_strip_right: "We don't process payments · We take you to the official store",
+
+    aggregator_tagline: 'Premium Streetwear · Aggregator',
+    deals_active: (n) => `${n} active deals`,
+    region_detected: 'Region detected',
+    region_detecting: 'Detecting region',
+
+    filter_label: 'Origin',
+    filter_all: 'All',
+    filter_mexico: 'Mexico',
+    filter_colombia: 'Colombia',
+    filter_global: 'Global',
+
+    hero_edition: 'Edition · Global',
+    hero_title_line1: 'Deals only.',
+    hero_title_line2: 'Premium streetwear.',
+    hero_subtitle:
+      "We curate verified discounts from official boutiques: Nike, Off-White, SSENSE, END Clothing, Lust México, Hype Colombia and more. We never process your payment — when you find your piece, we take you straight to the official store.",
+
+    catalog_title: 'Catalog',
+    catalog_meta: (n) => `${n} pieces`,
+    catalog_order_note: 'Local first · Global after',
+    catalog_empty: 'No deals match this filter. Change the origin to see more.',
+
+    go_to: 'Go to',
+    trust_badge: '100% secure payment at the official store',
+
+    secure_redirect: 'Secure redirect',
+    we_take_you_to: 'Taking you to',
+    leaving_message: (store, brand) =>
+      `You are leaving Recall Apparel. Your payment and data will be processed directly by **${store}**, the official store of **${brand}**.`,
+    verifying_link: 'Verifying link…',
+
+    footer_description:
+      "Affiliate aggregator. We don't sell or stock inventory, we don't process payments. We take you straight to the official store of each brand.",
+    footer_how_title: 'How it works',
+    footer_how_1: 'We find deals at official boutiques.',
+    footer_how_2: 'We show you the price you will see at the store.',
+    footer_how_3: "You buy direct. We just connect you.",
+    footer_legal: 'Legal',
+    legal_1: 'Recall Apparel participates in affiliate programs.',
+    legal_2: 'Brands, images and prices belong to their respective owners.',
+    legal_3: 'Each price is shown in the original currency of the destination store.',
+    footer_mvp: 'MVP v1',
+  },
+}
+
+export const LANGUAGES = [
+  { code: 'es', label: 'ES' },
+  { code: 'en', label: 'EN' },
+]
+
+export function detectInitialLanguage() {
+  if (typeof navigator === 'undefined') return 'en'
+  const lang = (
+    navigator.language ||
+    (navigator.languages && navigator.languages[0]) ||
+    'en'
+  ).toLowerCase()
+  return lang.startsWith('es') ? 'es' : 'en'
+}
+
+export function makeT(lang) {
+  const dict = TRANSLATIONS[lang] || TRANSLATIONS.en
+  return (key, ...args) => {
+    const value = dict[key]
+    if (typeof value === 'function') return value(...args)
+    return value !== undefined ? value : key
+  }
+}

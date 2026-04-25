@@ -1,4 +1,6 @@
-// Currency-aware formatter for MXN, COP, USD
+// Formateadores de precio. Cada producto se muestra siempre en su moneda
+// original (la que cobra la tienda destino), sin conversión.
+
 const CURRENCY_CONFIG = {
   MXN: { locale: 'es-MX', style: 'currency', currency: 'MXN', maximumFractionDigits: 0 },
   COP: { locale: 'es-CO', style: 'currency', currency: 'COP', maximumFractionDigits: 0 },
