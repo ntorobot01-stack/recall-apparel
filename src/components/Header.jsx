@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { ORIGIN_FLAGS } from '../lib/geo.js'
 import { LANGUAGES } from '../lib/i18n.js'
+import CountryDropdown from './CountryDropdown.jsx'
 
 // Géneros expuestos en la nav (Kids existe en el schema pero no se muestra).
 const NAV_GENDERS = [
@@ -20,10 +20,10 @@ const NAV_CATEGORIES = [
 export default function Header({
   activeNav,
   setActiveNav,
-  originFilter,
-  setOriginFilter,
+  selectedCountry,
+  setSelectedCountry,
+  availableCountries,
   totalDeals,
-  autoDetected,
   lang,
   setLang,
   t,
@@ -35,12 +35,6 @@ export default function Header({
   // Drawer mobile
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [drawerGender, setDrawerGender] = useState(null) // null = nivel 1; gender code = nivel 2
-
-  const originOptions = [
-    { code: 'MX', label: t('filter_mexico'), flag: ORIGIN_FLAGS.MX },
-    { code: 'CO', label: t('filter_colombia'), flag: ORIGIN_FLAGS.CO },
-    { code: 'GLOBAL', label: t('filter_global'), flag: ORIGIN_FLAGS.GLOBAL },
-  ]
 
   // Body scroll-lock cuando el drawer mobile está abierto.
   useEffect(() => {
@@ -149,36 +143,20 @@ export default function Header({
             </span>
           </div>
 
-          {/* Right side: deals counter + origin pills (desktop) */}
+          {/* Right side: deals counter + country dropdown (desktop) */}
           <div className="hidden md:flex items-center gap-5">
             <div className="hidden lg:flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--muted)]">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
               <span>{t('deals_active', totalDeals)}</span>
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="hidden lg:inline font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--muted)]">
-                {autoDetected ? t('region_detected') : t('region_detecting')}:
-              </span>
-              <div className="flex items-center bg-[#F5F5F5] rounded-full p-0.5">
-                {originOptions.map((r) => (
-                  <button
-                    key={r.code}
-                    onClick={() => setOriginFilter(originFilter === r.code ? 'ALL' : r.code)}
-                    className={`region-pill px-2.5 py-1 text-[11px] font-medium rounded-full whitespace-nowrap ${
-                      originFilter === r.code
-                        ? 'bg-black text-white'
-                        : 'text-[var(--ink)] hover:bg-white'
-                    }`}
-                    aria-pressed={originFilter === r.code}
-                    title={r.label}
-                  >
-                    <span className="mr-1">{r.flag}</span>
-                    {r.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <CountryDropdown
+              selectedCountry={selectedCountry}
+              setSelectedCountry={setSelectedCountry}
+              availableCountries={availableCountries}
+              t={t}
+              variant="header"
+            />
           </div>
 
           {/* Spacer mobile (mantiene el wordmark visualmente centrado) */}
@@ -321,23 +299,14 @@ export default function Header({
                 <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--muted)] mb-2">
                   {t('region_label')}
                 </div>
-                <div className="flex items-center bg-[#F5F5F5] rounded-full p-0.5 w-fit">
-                  {originOptions.map((r) => (
-                    <button
-                      key={r.code}
-                      onClick={() => setOriginFilter(originFilter === r.code ? 'ALL' : r.code)}
-                      className={`px-3 py-1.5 text-[12px] font-medium rounded-full whitespace-nowrap ${
-                        originFilter === r.code
-                          ? 'bg-black text-white'
-                          : 'text-[var(--ink)] hover:bg-white'
-                      }`}
-                      aria-pressed={originFilter === r.code}
-                    >
-                      <span className="mr-1">{r.flag}</span>
-                      {r.label}
-                    </button>
-                  ))}
-                </div>
+                <CountryDropdown
+                  selectedCountry={selectedCountry}
+                  setSelectedCountry={setSelectedCountry}
+                  availableCountries={availableCountries}
+                  t={t}
+                  variant="drawer"
+                  onSelect={() => setDrawerOpen(false)}
+                />
               </div>
 
               <div>

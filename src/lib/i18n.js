@@ -11,15 +11,16 @@ export const TRANSLATIONS = {
     // Header
     aggregator_tagline: 'Premium Streetwear · Aggregator',
     deals_active: (n) => `${n} ofertas activas`,
-    region_detected: 'Región detectada',
-    region_detecting: 'Detectando región',
 
-    // Filtro de origen (header pill)
-    filter_label: 'Origen',
-    filter_all: 'Todas',
-    filter_mexico: 'México',
-    filter_colombia: 'Colombia',
-    filter_global: 'Global',
+    // Selector de país (CountryDropdown)
+    search_country_placeholder: 'Buscar país...',
+    all_countries: 'Todos los países',
+    country_mx: 'México',
+    country_co: 'Colombia',
+    no_country_results: 'Sin ofertas en este país por ahora',
+
+    // Tagline (franja editorial bajo el header)
+    tagline_text: 'MARCAS OFICIALES · DROPS NUEVOS CADA DÍA · SIN INTERMEDIARIOS',
 
     // Filtro de género (gender_kids existe en el schema pero no se expone en UI)
     gender_label: 'Género',
@@ -71,7 +72,6 @@ export const TRANSLATIONS = {
     // Catalog
     catalog_title: 'Catálogo',
     catalog_meta: (n) => `${n} piezas`,
-    catalog_order_note: 'Locales primero · Globales después',
     catalog_empty: 'No hay ofertas con este filtro. Cambia el origen para ver más.',
 
     // Product card
@@ -96,7 +96,6 @@ export const TRANSLATIONS = {
     legal_1: 'Recall Apparel participa en programas de afiliación.',
     legal_2: 'Marcas, imágenes y precios pertenecen a sus respectivos dueños.',
     legal_3: 'Cada precio se muestra en la moneda original de la tienda destino.',
-    footer_mvp: 'MVP v1',
   },
 
   en: {
@@ -105,14 +104,14 @@ export const TRANSLATIONS = {
 
     aggregator_tagline: 'Premium Streetwear · Aggregator',
     deals_active: (n) => `${n} active deals`,
-    region_detected: 'Region detected',
-    region_detecting: 'Detecting region',
 
-    filter_label: 'Origin',
-    filter_all: 'All',
-    filter_mexico: 'Mexico',
-    filter_colombia: 'Colombia',
-    filter_global: 'Global',
+    search_country_placeholder: 'Search country...',
+    all_countries: 'All countries',
+    country_mx: 'Mexico',
+    country_co: 'Colombia',
+    no_country_results: 'No deals in this country yet',
+
+    tagline_text: 'OFFICIAL BRANDS · NEW DROPS EVERY DAY · NO MIDDLEMEN',
 
     gender_label: 'Gender',
     gender_all: 'All',
@@ -157,7 +156,6 @@ export const TRANSLATIONS = {
 
     catalog_title: 'Catalog',
     catalog_meta: (n) => `${n} pieces`,
-    catalog_order_note: 'Local first · Global after',
     catalog_empty: 'No deals match this filter. Change the origin to see more.',
 
     go_to: 'Go to',
@@ -179,7 +177,6 @@ export const TRANSLATIONS = {
     legal_1: 'Recall Apparel participates in affiliate programs.',
     legal_2: 'Brands, images and prices belong to their respective owners.',
     legal_3: 'Each price is shown in the original currency of the destination store.',
-    footer_mvp: 'MVP v1',
   },
 }
 

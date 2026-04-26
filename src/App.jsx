@@ -3,7 +3,7 @@ import { detectUserRegion } from './lib/geo.js'
 import { detectInitialLanguage, makeT } from './lib/i18n.js'
 import Header from './components/Header.jsx'
 import Hero from './components/Hero.jsx'
-import Marquee from './components/Marquee.jsx'
+import Tagline from './components/Tagline.jsx'
 import ProductCard from './components/ProductCard.jsx'
 import RedirectModal from './components/RedirectModal.jsx'
 import Footer from './components/Footer.jsx'
@@ -25,16 +25,17 @@ const CATEGORY_MAP = {
 }
 
 export default function App() {
-  // originFilter: 'ALL' | 'MX' | 'CO' | 'GLOBAL' — independiente, se mantiene aparte de la nav.
-  const [originFilter, setOriginFilter] = useState('ALL')
+  // selectedCountry: 'ALL' | 'MX' | 'CO' — filtro único del catálogo.
+  // - 'MX' / 'CO': muestra productos de ese país + GLOBAL (los GLOBAL son ubicuos)
+  // - 'ALL': muestra todo el catálogo sin filtrar
+  // Default 'ALL'; si la geo IP detecta MX o CO, se auto-selecciona ese país.
+  const [selectedCountry, setSelectedCountry] = useState('ALL')
 
   // activeNav: navegación jerárquica del mega-menú / drawer.
   // - gender: null | 'Men' | 'Women' | 'Unisex'
   // - category: null | 'Footwear' | 'Clothing' | 'Accessories' | 'Bags'
   const [activeNav, setActiveNav] = useState({ gender: null, category: null })
 
-  const [userCountry, setUserCountry] = useState('GLOBAL')
-  const [autoDetected, setAutoDetected] = useState(false)
   const [lang, setLang] = useState(() => detectInitialLanguage())
   const [selected, setSelected] = useState(null)
 
@@ -65,13 +66,14 @@ export default function App() {
     }
   }, [])
 
-  // Detectar país al cargar (afecta el ORDEN del catálogo, no el filtro).
+  // Detectar país al cargar y auto-seleccionar el filtro.
+  // detectUserRegion() devuelve 'MX' | 'CO' | 'GLOBAL'; mapeamos GLOBAL → 'ALL'.
   useEffect(() => {
     let cancelled = false
     detectUserRegion().then((detected) => {
       if (cancelled) return
-      setUserCountry(detected)
-      setAutoDetected(true)
+      const next = detected === 'MX' || detected === 'CO' ? detected : 'ALL'
+      setSelectedCountry(next)
       if ((detected === 'MX' || detected === 'CO') && lang !== 'es') {
         setLang('es')
       }
@@ -84,34 +86,33 @@ export default function App() {
 
   const t = useMemo(() => makeT(lang), [lang])
 
-  // Productos visibles: intersección de origen + nav (gender + category agrupados).
-  // El orden local-first se aplica primero sobre el catálogo completo y luego
-  // se filtra, para que el resultado preserve el orden incluso con filtros activos.
-  const visibleProducts = useMemo(() => {
-    let ordered
-    if (userCountry === 'GLOBAL') {
-      const globals = products.filter((p) => p.geo_tag === 'GLOBAL')
-      const rest = products.filter((p) => p.geo_tag !== 'GLOBAL')
-      ordered = [...globals, ...rest]
-    } else {
-      const local = products.filter((p) => p.geo_tag === userCountry)
-      const globals = products.filter((p) => p.geo_tag === 'GLOBAL')
-      const otherLocal = products.filter(
-        (p) => p.geo_tag !== userCountry && p.geo_tag !== 'GLOBAL'
-      )
-      ordered = [...local, ...globals, ...otherLocal]
+  // Países disponibles en el catálogo (excluye GLOBAL: no es un país real,
+  // siempre se muestra junto al país seleccionado). Lista única, sin orden:
+  // CountryDropdown la ordena alfabéticamente por nombre traducido.
+  const availableCountries = useMemo(() => {
+    const set = new Set()
+    for (const p of products) {
+      if (p.geo_tag && p.geo_tag !== 'GLOBAL') set.add(p.geo_tag)
     }
+    return Array.from(set)
+  }, [products])
 
+  // Productos visibles: intersección de país + nav (gender + category agrupados).
+  // Regla de país: 'ALL' no filtra; 'MX'/'CO' incluye ese país + GLOBAL (los GLOBAL
+  // son ubicuos y aparecen siempre que no estemos en ALL — donde ya se ven igual).
+  const visibleProducts = useMemo(() => {
     const allowedGenders = activeNav.gender ? GENDER_MAP[activeNav.gender] : null
     const allowedCategories = activeNav.category ? CATEGORY_MAP[activeNav.category] : null
 
-    return ordered.filter((p) => {
-      if (originFilter !== 'ALL' && p.geo_tag !== originFilter) return false
+    return products.filter((p) => {
+      if (selectedCountry !== 'ALL' && p.geo_tag !== selectedCountry && p.geo_tag !== 'GLOBAL') {
+        return false
+      }
       if (allowedGenders && !allowedGenders.includes(p.gender)) return false
       if (allowedCategories && !allowedCategories.includes(p.category)) return false
       return true
     })
-  }, [originFilter, activeNav, userCountry, products])
+  }, [selectedCountry, activeNav, products])
 
   const onSelect = useCallback((product) => setSelected(product), [])
   const onClose = useCallback(() => setSelected(null), [])
@@ -151,16 +152,16 @@ export default function App() {
       <Header
         activeNav={activeNav}
         setActiveNav={setActiveNav}
-        originFilter={originFilter}
-        setOriginFilter={setOriginFilter}
+        selectedCountry={selectedCountry}
+        setSelectedCountry={setSelectedCountry}
+        availableCountries={availableCountries}
         totalDeals={visibleProducts.length}
-        autoDetected={autoDetected}
         lang={lang}
         setLang={setLang}
         t={t}
       />
       <Hero t={t} />
-      <Marquee />
+      <Tagline t={t} />
 
       <main className="max-w-[1400px] mx-auto w-full px-6 mt-12">
         {navActive && (
@@ -197,11 +198,6 @@ export default function App() {
               ({t('catalog_meta', visibleProducts.length)})
             </span>
           </h2>
-          {originFilter === 'ALL' && !navActive && (
-            <span className="hidden md:block text-[11px] font-mono uppercase tracking-[0.2em] text-[var(--muted)]">
-              {t('catalog_order_note')}
-            </span>
-          )}
         </div>
 
         {loading ? (

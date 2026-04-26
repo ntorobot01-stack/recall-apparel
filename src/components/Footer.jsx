@@ -39,7 +39,7 @@ export default function Footer({ t }) {
         </div>
       </div>
       <div className="border-t border-[var(--line)] py-5 text-center text-[10.5px] font-mono uppercase tracking-[0.22em] text-[var(--muted)]">
-        © {new Date().getFullYear()} · Recall Apparel · {t('footer_mvp')}
+        © {new Date().getFullYear()} · Recall Apparel
       </div>
     </footer>
   )
