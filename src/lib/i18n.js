@@ -63,7 +63,6 @@ export const TRANSLATIONS = {
     close_filters: 'Cerrar',
 
     // Hero
-    hero_edition: 'Edición · Global',
     hero_title_line1: 'Solo ofertas.',
     hero_title_line2: 'Streetwear premium.',
     hero_subtitle:
@@ -151,7 +150,6 @@ export const TRANSLATIONS = {
     open_filters: 'Filters',
     close_filters: 'Close',
 
-    hero_edition: 'Edition · Global',
     hero_title_line1: 'Deals only.',
     hero_title_line2: 'Premium streetwear.',
     hero_subtitle:
