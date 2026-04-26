@@ -4,6 +4,8 @@ import { detectInitialLanguage, makeT } from './lib/i18n.js'
 import Header from './components/Header.jsx'
 import Hero from './components/Hero.jsx'
 import Tagline from './components/Tagline.jsx'
+import JustDroppedSection from './components/JustDroppedSection.jsx'
+import FeaturedEditSection from './components/FeaturedEditSection.jsx'
 import ProductCard from './components/ProductCard.jsx'
 import RedirectModal from './components/RedirectModal.jsx'
 import Footer from './components/Footer.jsx'
@@ -114,6 +116,21 @@ export default function App() {
     })
   }, [selectedCountry, activeNav, products])
 
+  // Productos para las secciones editoriales (JustDropped + FeaturedEdit).
+  // Respetan país y género (declaración de identidad), pero NO categoría: las
+  // secciones editoriales son discovery, romper el filtro de categoría es
+  // intencional y aporta variedad respecto al catálogo principal de abajo.
+  const editorialProducts = useMemo(() => {
+    const allowedGenders = activeNav.gender ? GENDER_MAP[activeNav.gender] : null
+    return products.filter((p) => {
+      if (selectedCountry !== 'ALL' && p.geo_tag !== selectedCountry && p.geo_tag !== 'GLOBAL') {
+        return false
+      }
+      if (allowedGenders && !allowedGenders.includes(p.gender)) return false
+      return true
+    })
+  }, [selectedCountry, activeNav.gender, products])
+
   const onSelect = useCallback((product) => setSelected(product), [])
   const onClose = useCallback(() => setSelected(null), [])
 
@@ -163,7 +180,14 @@ export default function App() {
       <Hero t={t} />
       <Tagline t={t} />
 
-      <main className="max-w-[1400px] mx-auto w-full px-6 mt-12">
+      {!loading && !error && (
+        <>
+          <JustDroppedSection products={editorialProducts} onSelect={onSelect} t={t} />
+          <FeaturedEditSection products={editorialProducts} onSelect={onSelect} t={t} />
+        </>
+      )}
+
+      <main className="max-w-[1400px] mx-auto w-full px-6 mt-20 md:mt-24">
         {navActive && (
           <div className="mb-6 flex items-center gap-3">
             <nav

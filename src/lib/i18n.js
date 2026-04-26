@@ -20,7 +20,15 @@ export const TRANSLATIONS = {
     no_country_results: 'Sin ofertas en este país por ahora',
 
     // Tagline (franja editorial bajo el header)
-    tagline_text: 'MARCAS OFICIALES · DROPS NUEVOS CADA DÍA · SIN INTERMEDIARIOS',
+    tagline_text: 'MARCAS OFICIALES · OFERTAS VERIFICADAS · SIN INTERMEDIARIOS',
+
+    // Secciones editoriales de homepage
+    section_just_dropped_title: 'Acaba de bajar de precio',
+    section_just_dropped_subtitle: 'Las últimas ofertas que pasaron nuestra verificación',
+    section_featured_edit_title: 'Edición del momento',
+    section_featured_edit_subtitle: 'Una selección por el equipo de Recall',
+    carousel_prev: 'Anterior',
+    carousel_next: 'Siguiente',
 
     // Filtro de género (gender_kids existe en el schema pero no se expone en UI)
     gender_label: 'Género',
@@ -64,10 +72,9 @@ export const TRANSLATIONS = {
     close_filters: 'Cerrar',
 
     // Hero
-    hero_title_line1: 'Recall.',
-    hero_title_line2: 'El lugar del streetwear premium.',
+    hero_title: 'Drops verificados, precios reales.',
     hero_subtitle:
-      'Pieza por pieza. Tienda por tienda. Te traemos los mejores precios del streetwear premium en un solo lugar. Tú haces click. Compras directo en la tienda oficial. Así de simple.',
+      'Cada drop es verificado antes de aparecer aquí. Tú haces click y compras directo en la tienda oficial.',
 
     // Catalog
     catalog_title: 'Catálogo',
@@ -111,7 +118,14 @@ export const TRANSLATIONS = {
     country_co: 'Colombia',
     no_country_results: 'No deals in this country yet',
 
-    tagline_text: 'OFFICIAL BRANDS · NEW DROPS EVERY DAY · NO MIDDLEMEN',
+    tagline_text: 'OFFICIAL BRANDS · VERIFIED DEALS · NO MIDDLEMEN',
+
+    section_just_dropped_title: 'Just dropped in price',
+    section_just_dropped_subtitle: 'The latest deals that passed our verification',
+    section_featured_edit_title: "This week's edit",
+    section_featured_edit_subtitle: 'A selection by the Recall team',
+    carousel_prev: 'Previous',
+    carousel_next: 'Next',
 
     gender_label: 'Gender',
     gender_all: 'All',
@@ -149,10 +163,9 @@ export const TRANSLATIONS = {
     open_filters: 'Filters',
     close_filters: 'Close',
 
-    hero_title_line1: 'Recall.',
-    hero_title_line2: 'The home of premium streetwear.',
+    hero_title: 'Verified drops, real prices.',
     hero_subtitle:
-      'Piece by piece. Store by store. We bring you the best prices in premium streetwear, all in one place. You click. You buy at the official store. Simple as that.',
+      'Every drop is verified before it appears here. You click and buy directly from the official store.',
 
     catalog_title: 'Catalog',
     catalog_meta: (n) => `${n} pieces`,

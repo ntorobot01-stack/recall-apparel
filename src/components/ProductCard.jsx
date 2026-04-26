@@ -18,9 +18,11 @@ export default function ProductCard({ product, onSelect, t }) {
           className="w-full h-full object-cover"
           loading="lazy"
         />
-        <div className="absolute top-4 left-4 bg-white text-black px-2.5 py-1 text-[11px] font-mono tracking-wider">
-          −{off}%
-        </div>
+        {off > 0 && (
+          <div className="absolute top-4 left-4 bg-black text-white px-3 py-1.5 text-[12px] font-bold tracking-wider">
+            −{off}%
+          </div>
+        )}
       </button>
 
       <div className="pt-5 px-1">
