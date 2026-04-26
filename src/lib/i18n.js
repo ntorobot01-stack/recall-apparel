@@ -21,13 +21,30 @@ export const TRANSLATIONS = {
     filter_colombia: 'Colombia',
     filter_global: 'Global',
 
-    // Filtro de género
+    // Filtro de género (gender_kids existe en el schema pero no se expone en UI)
     gender_label: 'Género',
     gender_all: 'Todos',
     gender_men: 'Hombre',
     gender_women: 'Mujer',
     gender_unisex: 'Unisex',
-    gender_kids: 'Niños',
+
+    // Navegación principal (mega-menú desktop / drawer mobile)
+    nav_men: 'HOMBRE',
+    nav_women: 'MUJER',
+    nav_unisex: 'UNISEX',
+    nav_footwear: 'CALZADO',
+    nav_clothing: 'ROPA',
+    nav_accessories_grouped: 'ACCESORIOS',
+    nav_bags: 'BOLSOS',
+
+    // Drawer mobile + breadcrumb
+    open_menu: 'Menú',
+    close_menu: 'Cerrar',
+    back: 'Volver',
+    view_all_in: (gender) => `Ver todo ${gender}`,
+    clear_filters: 'Limpiar',
+    region_label: 'Región',
+    language_label: 'Idioma',
 
     // Filtro de categoría
     category_label: 'Categoría',
@@ -103,7 +120,22 @@ export const TRANSLATIONS = {
     gender_men: 'Men',
     gender_women: 'Women',
     gender_unisex: 'Unisex',
-    gender_kids: 'Kids',
+
+    nav_men: 'MEN',
+    nav_women: 'WOMEN',
+    nav_unisex: 'UNISEX',
+    nav_footwear: 'FOOTWEAR',
+    nav_clothing: 'CLOTHING',
+    nav_accessories_grouped: 'ACCESSORIES',
+    nav_bags: 'BAGS',
+
+    open_menu: 'Menu',
+    close_menu: 'Close',
+    back: 'Back',
+    view_all_in: (gender) => `View all ${gender}`,
+    clear_filters: 'Clear',
+    region_label: 'Region',
+    language_label: 'Language',
 
     category_label: 'Category',
     category_all: 'All',

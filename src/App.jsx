@@ -8,15 +8,31 @@ import ProductCard from './components/ProductCard.jsx'
 import RedirectModal from './components/RedirectModal.jsx'
 import Footer from './components/Footer.jsx'
 
+// Mapeo de género de UI → géneros del schema que matchean.
+// Hombre/Mujer incluyen Unisex (los unisex aparecen en cualquier género).
+const GENDER_MAP = {
+  Men: ['Men', 'Unisex'],
+  Women: ['Women', 'Unisex'],
+  Unisex: ['Unisex'],
+}
+
+// Mapeo de categoría agrupada → categorías del schema que matchean.
+const CATEGORY_MAP = {
+  Footwear: ['Footwear'],
+  Clothing: ['Tops', 'Bottoms', 'Sets', 'Outerwear'],
+  Accessories: ['Accessories', 'Jewelry'],
+  Bags: ['Bags'],
+}
+
 export default function App() {
-  // Filtros del catálogo: 'ALL' es siempre el default (no filtra).
-  // - originFilter: 'ALL' | 'MX' | 'CO' | 'GLOBAL'
-  // - genderFilter: 'ALL' | 'Men' | 'Women' | 'Unisex' | 'Kids'
-  // - categoryFilter: 'ALL' | 'Footwear' | 'Tops' | 'Bottoms' | 'Sets' | 'Outerwear' | 'Accessories' | 'Bags' | 'Jewelry'
-  // El orden local-first sólo aplica cuando los tres están en 'ALL'.
+  // originFilter: 'ALL' | 'MX' | 'CO' | 'GLOBAL' — independiente, se mantiene aparte de la nav.
   const [originFilter, setOriginFilter] = useState('ALL')
-  const [genderFilter, setGenderFilter] = useState('ALL')
-  const [categoryFilter, setCategoryFilter] = useState('ALL')
+
+  // activeNav: navegación jerárquica del mega-menú / drawer.
+  // - gender: null | 'Men' | 'Women' | 'Unisex'
+  // - category: null | 'Footwear' | 'Clothing' | 'Accessories' | 'Bags'
+  const [activeNav, setActiveNav] = useState({ gender: null, category: null })
+
   const [userCountry, setUserCountry] = useState('GLOBAL')
   const [autoDetected, setAutoDetected] = useState(false)
   const [lang, setLang] = useState(() => detectInitialLanguage())
@@ -56,7 +72,6 @@ export default function App() {
       if (cancelled) return
       setUserCountry(detected)
       setAutoDetected(true)
-      // Si el usuario está en MX o CO y el navegador no tenía español, priorizamos español.
       if ((detected === 'MX' || detected === 'CO') && lang !== 'es') {
         setLang('es')
       }
@@ -69,11 +84,10 @@ export default function App() {
 
   const t = useMemo(() => makeT(lang), [lang])
 
-  // Productos visibles: intersección de los 3 filtros (origen, género, categoría).
+  // Productos visibles: intersección de origen + nav (gender + category agrupados).
   // El orden local-first se aplica primero sobre el catálogo completo y luego
   // se filtra, para que el resultado preserve el orden incluso con filtros activos.
   const visibleProducts = useMemo(() => {
-    // 1) Ordenar local-first sobre el catálogo completo.
     let ordered
     if (userCountry === 'GLOBAL') {
       const globals = products.filter((p) => p.geo_tag === 'GLOBAL')
@@ -88,14 +102,16 @@ export default function App() {
       ordered = [...local, ...globals, ...otherLocal]
     }
 
-    // 2) Aplicar los 3 filtros como intersección.
+    const allowedGenders = activeNav.gender ? GENDER_MAP[activeNav.gender] : null
+    const allowedCategories = activeNav.category ? CATEGORY_MAP[activeNav.category] : null
+
     return ordered.filter((p) => {
       if (originFilter !== 'ALL' && p.geo_tag !== originFilter) return false
-      if (genderFilter !== 'ALL' && p.gender !== genderFilter) return false
-      if (categoryFilter !== 'ALL' && p.category !== categoryFilter) return false
+      if (allowedGenders && !allowedGenders.includes(p.gender)) return false
+      if (allowedCategories && !allowedCategories.includes(p.category)) return false
       return true
     })
-  }, [originFilter, genderFilter, categoryFilter, userCountry, products])
+  }, [originFilter, activeNav, userCountry, products])
 
   const onSelect = useCallback((product) => setSelected(product), [])
   const onClose = useCallback(() => setSelected(null), [])
@@ -107,15 +123,36 @@ export default function App() {
     }
   }, [selected])
 
+  // Breadcrumb: visible cuando hay navegación activa (gender o category).
+  const navActive = activeNav.gender || activeNav.category
+  const genderLabelKey = activeNav.gender
+    ? activeNav.gender === 'Men'
+      ? 'gender_men'
+      : activeNav.gender === 'Women'
+        ? 'gender_women'
+        : 'gender_unisex'
+    : null
+  const categoryLabelKey = activeNav.category
+    ? activeNav.category === 'Footwear'
+      ? 'nav_footwear'
+      : activeNav.category === 'Clothing'
+        ? 'nav_clothing'
+        : activeNav.category === 'Accessories'
+          ? 'nav_accessories_grouped'
+          : 'nav_bags'
+    : null
+
+  function clearNav() {
+    setActiveNav({ gender: null, category: null })
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header
+        activeNav={activeNav}
+        setActiveNav={setActiveNav}
         originFilter={originFilter}
         setOriginFilter={setOriginFilter}
-        genderFilter={genderFilter}
-        setGenderFilter={setGenderFilter}
-        categoryFilter={categoryFilter}
-        setCategoryFilter={setCategoryFilter}
         totalDeals={visibleProducts.length}
         autoDetected={autoDetected}
         lang={lang}
@@ -126,6 +163,33 @@ export default function App() {
       <Marquee />
 
       <main className="max-w-[1400px] mx-auto w-full px-6 mt-12">
+        {navActive && (
+          <div className="mb-6 flex items-center gap-3">
+            <nav
+              aria-label="breadcrumb"
+              className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--muted)] flex items-center gap-2"
+            >
+              {genderLabelKey && (
+                <span className="text-[var(--ink)]">{t(genderLabelKey)}</span>
+              )}
+              {genderLabelKey && categoryLabelKey && (
+                <span aria-hidden="true">/</span>
+              )}
+              {categoryLabelKey && (
+                <span className="text-[var(--ink)]">{t(categoryLabelKey)}</span>
+              )}
+            </nav>
+            <button
+              onClick={clearNav}
+              className="font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--muted)] hover:text-[var(--ink)] flex items-center gap-1"
+              aria-label={t('clear_filters')}
+            >
+              <span aria-hidden="true">✕</span>
+              <span>{t('clear_filters')}</span>
+            </button>
+          </div>
+        )}
+
         <div className="flex items-end justify-between mb-8">
           <h2 className="text-[20px] font-medium tracking-tight">
             {t('catalog_title')}
@@ -133,7 +197,7 @@ export default function App() {
               ({t('catalog_meta', visibleProducts.length)})
             </span>
           </h2>
-          {originFilter === 'ALL' && (
+          {originFilter === 'ALL' && !navActive && (
             <span className="hidden md:block text-[11px] font-mono uppercase tracking-[0.2em] text-[var(--muted)]">
               {t('catalog_order_note')}
             </span>

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,6 +9,10 @@
   --paper: #FFFFFF;
   --muted: #6B6B6B;
   --line: #EFEFEF;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Archivo Black', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, monospace;
 }
 
 html, body {
@@ -15,13 +21,20 @@ html, body {
 }
 
 body {
-  font-family: 'Geist', system-ui, -apple-system, sans-serif;
-  font-feature-settings: 'ss01', 'cv11';
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
 .font-mono {
-  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-family: var(--font-mono);
+}
+
+/* Hero: la segunda línea del título usa Archivo Black para crear contraste
+   editorial con la primera línea (Inter light). El selector aplica al span
+   directo dentro de cualquier h1, sin necesidad de tocar Hero.jsx. */
+h1 > span {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
 }
 
 /* Subtle, almost-imperceptible elevation — Farfetch-style */
@@ -83,6 +96,26 @@ body {
 .rise-1 { animation: rise 700ms ease 60ms forwards; opacity: 0; }
 .rise-2 { animation: rise 700ms ease 180ms forwards; opacity: 0; }
 .rise-3 { animation: rise 700ms ease 320ms forwards; opacity: 0; }
+
+/* Drawer slide-in from left (mobile menu) */
+@keyframes slideInLeft {
+  from { transform: translateX(-100%) }
+  to { transform: translateX(0) }
+}
+
+.drawer-panel {
+  animation: slideInLeft 240ms cubic-bezier(.2, .7, .2, 1) forwards;
+}
+
+/* Mega-menu fade-in (desktop) */
+@keyframes megaFade {
+  from { opacity: 0; transform: translateY(-4px) }
+  to { opacity: 1; transform: translateY(0) }
+}
+
+.mega-panel {
+  animation: megaFade 160ms ease forwards;
+}
 
 /* Marquee strip */
 @keyframes marquee {
