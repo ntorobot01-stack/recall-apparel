@@ -63,8 +63,8 @@ export const TRANSLATIONS = {
     close_filters: 'Cerrar',
 
     // Hero
-    hero_title_line1: 'Solo ofertas.',
-    hero_title_line2: 'Streetwear premium.',
+    hero_title_line1: 'Recall.',
+    hero_title_line2: 'El lugar del streetwear premium.',
     hero_subtitle:
       'Pieza por pieza. Tienda por tienda. Te traemos los mejores precios del streetwear premium en un solo lugar. Tú haces click. Compras directo en la tienda oficial. Así de simple.',
 
@@ -150,8 +150,8 @@ export const TRANSLATIONS = {
     open_filters: 'Filters',
     close_filters: 'Close',
 
-    hero_title_line1: 'Deals only.',
-    hero_title_line2: 'Premium streetwear.',
+    hero_title_line1: 'Recall.',
+    hero_title_line2: 'The home of premium streetwear.',
     hero_subtitle:
       'Piece by piece. Store by store. We bring you the best prices in premium streetwear, all in one place. You click. You buy at the official store. Simple as that.',
 
